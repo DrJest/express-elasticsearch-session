@@ -1,0 +1,31 @@
+{
+  "name": "express-elasticsearch-session",
+  "version": "0.1.0",
+  "description": "ElasticSearch session store, using elasticsearch-js for communications with server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrJest/express-elasticsearch-session.git"
+  },
+  "keywords": [
+    "elasticsearch",
+    "elastic",
+    "search",
+    "express",
+    "session",
+    "store",
+    "sessionstore"
+  ],
+  "author": "Simone Albano <dc.jest@gmail.com> (https://drjest.xyz)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DrJest/express-elasticsearch-session/issues"
+  },
+  "homepage": "https://github.com/DrJest/express-elasticsearch-session#readme",
+  "dependencies": {
+    "elasticsearch": "^12.1.3"
+  }
+}
