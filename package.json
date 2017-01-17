@@ -1,4 +1,4 @@
-ù{
+{
   "name": "express-elasticsearch-session",
   "version": "0.1.2",
   "description": "ElasticSearch session store, using elasticsearch-js for communications with server",
