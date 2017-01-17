@@ -4,7 +4,7 @@
  * Usage:
  * var express = require('express')
  *   , session = require('express-session')
- *   , ESStore = require('connect-elasticsearch-session')(session);
+ *   , ESStore = require('express-elasticsearch-session')(session);
  *
  * Then:
  * server.use(session({

@@ -1,6 +1,6 @@
 {
   "name": "express-elasticsearch-session",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ElasticSearch session store, using elasticsearch-js for communications with server",
   "main": "index.js",
   "scripts": {
