@@ -70,10 +70,8 @@ module.exports = function (session) {
       if( typeof cb !== "function" ) {
         cb = () => {};
       }
-      if ( e ) { return cb(e); } 
-      if ( typeof r === 'undefined' ) { return cb(); }
-      if(new Date().getTime() - r._source.timestamp > this.options.ttl) {
-        return cb(new Error("Session Expired"));
+      if ( e || typeof r === 'undefined' || new Date().getTime() - r._source.timestamp > this.options.ttl ) {
+        return cb();
       }
       cb(null, r._source);
     })
