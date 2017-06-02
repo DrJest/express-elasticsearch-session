@@ -150,8 +150,8 @@ module.exports = function (session) {
     if ( this.timeouts[this.pSid(sid)] ) {
       clearTimeout(this.timeouts[this.pSid(sid)]);
     }
-    this.timeouts = setTimeout(function () {
-      self.destroy(self.pSid(sid));
+    this.timeouts[this.pSid(sid)] = setTimeout(function () {
+      self.destroy(sid);
     }, this.options.ttl);
   };
 
