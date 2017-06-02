@@ -45,15 +45,17 @@ module.exports = function (session) {
     };
 
     this.options = util._extend(defaults, options || {});
-    
+
     this.client = new elasticsearch.Client({
       host: this.options.host,
       log: this.options.logLevel
     });
+
+    this.initialSessionTimeout()
   }
 
   util.inherits(ESStore, session.Store);
-  
+
   ESStore.prototype.pSid = function(sid) {
     return (this.options.prefix) + sid;
   }
@@ -106,6 +108,71 @@ module.exports = function (session) {
       id: this.pSid(sid)
     }, function (e, r) {
       if( typeof cb === "function" ) {
+        cb(e, r);
+      }
+    });
+  };
+
+  /**
+   * Set up initial timeout after service restart
+   */
+  ESStore.prototype.initialSessionTimeout = function () {
+    var self = this
+    this.timeouts = {};
+    this.client.search({
+      index: this.options.index,
+      type: this.options.typeName,
+      body: {
+        query: {
+          match_all: {}
+        }
+      },
+      _source: false
+    }, function (e, r) {
+      if (e) {
+        console.error(e)
+      }
+
+      var hits = r.hits.hits
+      if (hits) {
+        hits.forEach(function (hit) {
+          self.sessionTimeout(hit._id)
+        })
+      }
+    })
+  }
+
+  /**
+   * Clear existing timeout for session deletion and refresh
+   */
+  ESStore.prototype.sessionTimeout = function (sid) {
+    var self = this
+    if ( this.timeouts[this.pSid(sid)] ) {
+      clearTimeout(this.timeouts[this.pSid(sid)]);
+    }
+    this.timeouts = setTimeout(function () {
+      self.destroy(self.pSid(sid));
+    }, this.options.ttl);
+  };
+
+  /**
+   * Refresh a session's expiry
+   */
+  ESStore.prototype.touch = function (sid, sess, cb) {
+    this.sessionTimeout(sid)
+    this.client.update({
+      index: this.options.index,
+      type: this.options.typeName,
+      id: this.pSid(sid),
+      body: {
+        script: {
+          inline: "ctx._source.cookie.expires = Instant.ofEpochMilli(params.now).plusMillis(ctx._source.cookie.originalMaxAge).toString();",
+          lang: "painless",
+          params: { now: new Date().getTime() }
+        }
+      }
+    }, function (e, r) {
+      if ( typeof cb === "function" ) {
         cb(e, r);
       }
     });
